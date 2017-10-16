@@ -77,7 +77,7 @@ class DataFileReader:
                     pass
                 else:
                     return False
-            except TypeError as type_error:
+            except TypeError:
                 pass
         return True
 
