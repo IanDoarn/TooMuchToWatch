@@ -81,9 +81,9 @@ class DataFileReader:
                 pass
         return True
 
-    def __parse(self, data, pattern=r'^(.*)\s(\(.*\))\s\|\s{3}(.*star.|),(\s.*|)$') -> Media:
-        if re.match(pattern, data):
-            r = re.search(pattern, data)
+    def __parse(self, data, ):
+        if re.match(r'^(.*)\s(\(.*\))\s\|\s{3}(.*star.|),(\s.*|)$', data):
+            r = re.search(r'^(.*)\s(\(.*\))\s\|\s{3}(.*star.|),(\s.*|)$', data)
             title = r.group(1)
             year = r.group(2)
             length = r.group(4)[1:] if r.group(4) != '' else None
