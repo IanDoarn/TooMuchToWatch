@@ -28,7 +28,7 @@ class TitleFilter(Filter):
         self.string = expression
 
     def __contains__(self, string):
-        return re.match(r'(?i)(?:^|\W){}(?:$|\W)'.format(string), self.title)
+        return len(re.findall(r'(?i)(?:^|\W){}(?:$|\W)'.format(string), self.title)) > 0
 
     def use(self):
         return self.__contains__(self.string)
@@ -79,7 +79,7 @@ class YearFilter(Filter):
 
         :return: bool
         """
-        return eval("{}{}".format(str(self.year), self.expression))
+        return eval("{}{}".format(str(self.year[0]), self.expression))
 
     def use(self):
         return self.compare()

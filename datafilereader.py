@@ -6,18 +6,30 @@ import re
 
 def create_filters(**kwargs):
     filter_list = []
-    if kwargs['title']:
+
+    title = kwargs.get('title')
+    rating = kwargs.get('rating')
+    genre = kwargs.get('genre')
+    runtime = kwargs.get('runtime')
+    year = kwargs.get('year')
+
+    if not any([title, rating, genre, runtime, year]):
+        raise KeyError('No valid kwargs supplied.')
+    if title is not None:
         filter_list.append([TitleFilter, kwargs['title']])
-    elif kwargs['rating']:
+    if rating is not None:
         filter_list.append([RatingFilter, kwargs['rating']])
-    elif kwargs['genre']:
-        filter_list.append([GenreFilter, kwargs['genre']])
-    elif kwargs['runtime']:
+    if genre is not None:
+        if genre.lower() == 'movie':
+            filter_list.append([GenreFilter, Movie])
+        elif genre.lower() == 'series':
+            filter_list.append([GenreFilter, Series])
+        else:
+            filter_list.append([GenreFilter, Media])
+    if runtime is not None:
         filter_list.append([RuntimeFilter, kwargs['runtime']])
-    elif kwargs['year']:
+    if year is not None:
         filter_list.append([YearFilter, kwargs['year']])
-    else:
-        raise NameError('Could not find any required kwargs')
     return filter_list
 
 
