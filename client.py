@@ -1,15 +1,10 @@
-from datafilereader import DataFileReader
-from media import Movie, Series, Media
-from filters import TitleFilter, RatingFilter, GenreFilter
+from datafilereader import DataFileReader, create_filters
 
-dfr = DataFileReader(r'NetflixUSA_Oct15_cleaned.txt')
+dfr = DataFileReader(r'NetflixUSA_Oct15_cleaned.txt',
+                     filters=create_filters(
+                         title='epic'
+                     ))
+dfr.search()
 
-filters = [
-    [GenreFilter, Series],
-    [RatingFilter, '> 4.0']
-]
-
-dfr.search(filters=filters)
-
-for line in dfr.master_list:
-    print(str(line))
+for i, line in enumerate(dfr.current_list):
+    print(i + 1, str(line))

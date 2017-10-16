@@ -1,27 +1,61 @@
 from media import Media, Movie, Series
-from filters import Filter, TitleFilter, GenreFilter, RatingFilter, \
+from filters import TitleFilter, GenreFilter, RatingFilter, \
     RuntimeFilter, YearFilter
 import re
 
-class DataFileReader:
 
+def create_filters(**kwargs):
+    filter_list = []
+    if kwargs['title']:
+        filter_list.append([TitleFilter, kwargs['title']])
+    elif kwargs['rating']:
+        filter_list.append([RatingFilter, kwargs['rating']])
+    elif kwargs['genre']:
+        filter_list.append([GenreFilter, kwargs['genre']])
+    elif kwargs['runtime']:
+        filter_list.append([RuntimeFilter, kwargs['runtime']])
+    elif kwargs['year']:
+        filter_list.append([YearFilter, kwargs['year']])
+    else:
+        raise NameError('Could not find any required kwargs')
+    return filter_list
+
+
+class DataFileReader:
     def __init__(self, file, filters=None):
         self.file = file
         self.filters = filters
         self.master_list = []
+        self.current_list = None
+        self.filter_list = filters
+        self.__load()
 
-    def search(self, filters=None):
-        self.master_list = []
+    def __load(self):
         with open(self.file, 'r')as data_file:
             data = data_file.read().splitlines()
-
         for line in data:
+            self.master_list.append(line)
+
+    def search(self):
+        self.current_list = []
+        for line in self.master_list:
             _line = self.__parse(line)
-            if filters is None:
-                self.master_list.append(_line)
+            if self.filter_list is None:
+                self.current_list.append(_line)
             else:
-                if self.__filter(filters, _line):
-                    self.master_list.append(_line)
+                if self.__filter(self.filter_list, _line):
+                    self.current_list.append(_line)
+
+    def update_filters(self, new_filters):
+        if type(self.filter_list) is list:
+            self.filter_list.extend(new_filters)
+        else:
+            self.filter_list = new_filters
+        self.search()
+
+    def clear_filters(self):
+        self.filter_list = None
+        self.search()
 
     @staticmethod
     def __filter(filters, data) -> bool:
